@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
   <ModulePrefs title="Precision Queue Training"
-      description="Allows dynamic configuration of Precision Routing using the CCE Rest API. This version includes A/B side failover support."
+      description="Allows dynamic configuration of Precision Routing using the CCE Rest API. This version includes A/B side failover support, as well as a configurable marquee using the labconfig API."
               thumbnail="http://localhost:8080/"
               screenshot="screenshot.png"
               height="580"> 
