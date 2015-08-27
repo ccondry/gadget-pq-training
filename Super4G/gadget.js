@@ -2,6 +2,7 @@ var BASE_AGENT_API_URL_A = "https://" + UCCE_SIDE_B + "/unifiedconfig/config/age
 var BASE_AGENT_API_URL_B = "https://" + UCCE_SIDE_A + "/unifiedconfig/config/agent/";
 var attributeRefURL = "/unifiedconfig/config/attribute/" + quizAttributeRefID;
 
+
 var grade;
 var agentDBID;
 
@@ -315,6 +316,23 @@ function initData() {
 
   var agentID = prefs.getString("id");
   agentDBID = lookupDatabaseID(agentID);
+  console.log("training marquee: " + $("#trainingMarquee").html());
+  $("#trainingMarquee").html("mytest");
+  var agentId = "41377";
+  var token = "f2607545332617d49297b7b63272c4256407d5a3b7a35b527352a6e2c7b7558327e6a502343257b561212962";
+  var url = "https://www1.cis.cisco.com/labconfig/api/marquee/"+agentId+"/?token="+token;
+  var params = setRequestParams(gadgets.io.MethodType.GET, null);
+  gadgets.io.makeRequest(url, createCallbackFunction.call(this, function(response){
+      console.log("marquee response: ",response);
+      try {
+            var parsed = JSON.parse(response.text);
+            console.log("updating marquee text = ", parsed.marquee);
+            $("#trainingMarquee").html(parsed.marquee);
+      } catch(e) {
+          console.log("exception getting marquee text from makeRequest response: ",e);
+      }
+  }, url, gadgets.io.MethodType.GET, null), params);
+
 }
 
 gadgets.util.registerOnLoadHandler(initData);
