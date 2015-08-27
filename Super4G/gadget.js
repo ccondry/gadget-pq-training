@@ -316,11 +316,7 @@ function initData() {
 
   var agentID = prefs.getString("id");
   agentDBID = lookupDatabaseID(agentID);
-  console.log("training marquee: " + $("#trainingMarquee").html());
-  $("#trainingMarquee").html("mytest");
-  var agentId = "41377";
-  var token = "f2607545332617d49297b7b63272c4256407d5a3b7a35b527352a6e2c7b7558327e6a502343257b561212962";
-  var url = "https://www1.cis.cisco.com/labconfig/api/marquee/"+agentId+"/?token="+token;
+  var url = marqueeApiUrlBase+agentID+"/?token="+marqueeApiToken;
   var params = setRequestParams(gadgets.io.MethodType.GET, null);
   gadgets.io.makeRequest(url, createCallbackFunction.call(this, function(response){
       console.log("marquee response: ",response);
