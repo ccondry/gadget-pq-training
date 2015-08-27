@@ -1,5 +1,5 @@
 function createAuthHeader() {
-  var authString = "YWRtaW5pc3RyYXRvckBjY2ljLmNvbTpRcGFsem0xMA==";
+  var authString = "bWVhZHlAY2NpYy5jb206Q2lzY28xMjNjaXNjbw==";
 //prefs.getString("authorization");
 
   return "Basic " + authString;
