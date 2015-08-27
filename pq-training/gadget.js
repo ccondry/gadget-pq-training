@@ -316,7 +316,9 @@ function initData() {
 
   var agentID = prefs.getString("id");
   agentDBID = lookupDatabaseID(agentID);
-  var url = marqueeApiUrlBase+agentID+"/?token="+marqueeApiToken;
+  var now = new Date().getTime();
+  var url = marqueeApiUrlBase+agentID+"/?token="+marqueeApiToken+"&nocache="+now;
+  console.log("get marquee api url = " + url);
   var params = setRequestParams(gadgets.io.MethodType.GET, null);
   gadgets.io.makeRequest(url, createCallbackFunction.call(this, function(response){
       console.log("marquee response: ",response);
