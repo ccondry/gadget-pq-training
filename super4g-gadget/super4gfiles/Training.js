@@ -1,6 +1,6 @@
-var UCCE_DS_IP = "10.86.140.72";
-var GADGET_HOST_IP = "10.86.140.67";
-var quizAttributeRefID = "5024";
+var UCCE_DS_IP = "10.88.33.103";
+var GADGET_HOST_IP = "10.88.33.13";
+var quizAttributeRefID = "5168";
 
 var BASE_AGENT_API_URL = "http://" + UCCE_DS_IP + "/unifiedconfig/config/agent/";
 var attributeRefURL = "/unifiedconfig/config/attribute/" + quizAttributeRefID;
