@@ -1,0 +1,63 @@
+    body {
+      background-color: transparent;
+    }
+
+    marquee {
+      line-height: 90px;
+      color: black;
+      font-size: 25pt;
+      text-decoration: none;
+      font-family: "Arial", sans-serif
+    }
+
+    textarea#styled {
+      width: 400px;
+      height: 325px;
+      margin-left:10px;
+      resize: none;
+    }
+
+    #training #panelWrapper {
+      width: 810px;
+      height: 330px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #training .contentPanel {
+      width: 400px;
+      float:left;
+    }
+
+    #result {
+      line-height:90px;
+      color:black;
+      font-size: 18pt;
+      font-family: "Arial", sans-serif
+    }
+
+    ol {
+      height: 425px;
+    }
+
+    .questionGrp {
+      width:360px;
+      margin:10px 0 0 0;
+      line-height:5px;
+      float:left;
+      text-align:left;
+    }
+
+    #evaluation {
+      width: 750px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .questionGrp input {
+      width: 75px;
+    }
+
+    #content {
+      text-align: center;
+    }
