@@ -1,0 +1,121 @@
+<!--[if IE]>
+<script src="/3rdpartygadget/files/html5.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="gadget.css" media="screen" />
+
+  <script type="text/javascript">
+	var prefs=new gadgets.Prefs();
+  </script>
+
+    <!-- jquery and underscore -->
+    <script type="text/javascript" src="../jquery.min.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    
+    <!-- Gadget Config -->
+    <script type="text/javascript" src="config.js"></script>
+
+    <!-- Gadget Business Logic -->
+    <script type="text/javascript" src="gadget.js"></script>
+
+    <!-- REST Utils -->
+    <script type="text/javascript" src="RestUtils.js"></script>
+
+       
+    <div id="content">
+        <div id="training">
+          <marquee behavior="alternate" width="90%">New 4G Phone Training Available!</marquee>
+	  <div id="panelWrapper">
+	    <div class="contentPanel">
+          <object width='400' height='325' id='flvPlayer'>
+              <embed src='/3rdpartygadget/files/Super4G/OSplayer.swf?movie=super4gvideo.flv&btncolor=0x333333&accentcolor=0x31b8e9&txtcolor=0xdddddd&volume=30&autoload=on&autoplay=off&vTitle=Super4G Phone Training&showTitle=yes' width='400' height='325' allowFullScreen='true' type='application/x-shockwave-flash' allowScriptAccess='always'>
+          </object>
+	    </div>
+	  
+	    <div class="contentPanel">
+	      <textarea id="styled">Notes:</textarea>
+	    </div>
+	  </div>
+
+	  <br><br>
+          <input value="Begin Certification Exam" class="btn btn-large" type="submit" onClick="startEvaluation()">
+          <br><br>
+        </div> <!-- /div training -->
+
+        <div id="evaluation" style="display:none;">
+          <form name="userQuiz">
+              <h3>Passing Score: 7/10 or better</h3>
+                <ol>
+                  <div class="questionGrp">
+		  <li>Does the SUPER 4G support bluetooth technology?</li><br>
+		  <input name="question1" value="true" checked="checked" type="radio"> True</input><br>
+		  <input name="question1" value="false" type="radio"> False</input><br>
+                  </div>
+
+                  <div class="questionGrp">
+		  <li>Is this SUPER 4G compatible with MP3s?</li><br>
+		  <input name="question2" value="true" checked="checked" type="radio"> True</input><br>
+		  <input name="question2" value="false" type="radio"> False</input><br>
+                  </div>			            
+
+                  <div class="questionGrp">
+		  <li>What type of camera is built into the SUPER 4G?</li><br>
+		  <input name="question3" value="4.0MP" type="radio"> 4.0MP</input><br>
+		  <input name="question3" value="6.0MP" type="radio"> 6.0MP</input><br>
+		  <input name="question3" value="8.0MP" checked="checked" type="radio"> 8.0MP</input><br>
+                  </div>			            
+
+                  <div class="questionGrp">
+		  <li>How much internal memory is this device shipped with?</li><br>
+		  <input name="question4" value="4GB" type="radio"> 4GB</input><br>
+		  <input name="question4" value="8GB" type="radio"> 8GB</input><br>
+		  <input name="question4" value="16GB" checked="checked" type="radio"> 16GB</input><br>
+                  </div>			            
+
+                  <div class="questionGrp">
+		  <li>Is flash supported on the SUPER 4G?</li><br>
+		  <input name="question5" value="true" checked="checked" type="radio"> True</input><br>
+		  <input name="question5" value="false" type="radio"> False</input><br>
+                  </div>
+
+                  <div class="questionGrp">
+		  <li>What is the maximum video resolution supported.</li><br>
+		  <input name="question6" value="1080p" checked="checked" type="radio"> 1080p</input><br>
+		  <input name="question6" value="720p" type="radio"> 720p</input><br>
+		  <input name="question6" value="480p" type="radio"> 480p</input><br>
+                  </div>
+
+                  <div class="questionGrp">
+		  <li>Does the SUPER 4G support wireless charging?</li><br>
+		  <input name="question7" value="true" checked="checked" type="radio"> True</input><br>
+		  <input name="question7" value="false" type="radio"> False</input><br>
+                  </div>
+
+                  <div class="questionGrp">
+		  <li>Does the SUPER 4G support NFC for wireless exchange of data with other NFC devices?</li><br>
+		  <input name="question8" value="true" checked="checked" type="radio"> True</input><br>
+		  <input name="question8" value="false" type="radio"> False</input><br>
+                  </div>
+
+                  <div class="questionGrp">
+		  <li>What is the talk time battery life?</li><br>
+		  <input name="question9" value="30 hours" checked="checked" type="radio"> 30 hours</input><br>
+		  <input name="question9" value="20 hours" type="radio"> 20 hours</input><br>
+		  <input name="question9" value="10 hours" type="radio"> 10 hours</input><br>
+                  </div>
+
+                  <div class="questionGrp">
+		  <li>Does the SUPER 4G support WiFi?</li><br>
+		  <input name="question10" value="true" checked="checked" type="radio"> True</input><br>
+		  <input name="question10" value="false" type="radio"> False</input><br>
+                  </div>
+                </ol>
+          </form>
+          <input value="Submit" class="btn btn-large" type="submit" onClick="gradeTest()">
+          <br><br>
+        </div>
+
+        <div id="result"></div>
+
+    </div> <!-- /div content -->
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+  <ModulePrefs title="Super4G Precision Queue Demo"
+              description="Allows dynamic configuration of Precision Routing using the CCE Rest API"
+              thumbnail="http://localhost:8080/"
+              screenshot="screenshot.png"
+              height="580">
+    <Require feature="settitle"/>
+    <Require feature="dynamic-height"/>
+    <Require feature="pubsub-2"/>
+    <Locale lang="en" country="US" messages="http://localhost:8080/desktop/container/GadgetsI18n.jsp?lang=en&amp;country=US" />
+    <Locale lang="pg" messages="http://localhost:8080/desktop/container/GadgetsI18n.jsp?lang=pg" />
+    <Locale messages="http://localhost:8080/desktop/container/GadgetsI18n.jsp?lang=ALL&amp;country=ALL" />
+  </ModulePrefs>
+  <Content type="html" href="gadget.html">
+  </Content>
+</Module>
