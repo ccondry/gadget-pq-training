@@ -2,15 +2,12 @@
 <Module>
   <ModulePrefs title="Precision Queue Training"
       description="Allows dynamic configuration of Precision Routing using the CCE Rest API. This version includes A/B side failover support, as well as a configurable marquee using the labconfig API."
-              thumbnail="http://localhost:8080/"
+              thumbnail="thumbnail.png"
               screenshot="screenshot.png"
               height="580"> 
     <Require feature="settitle"/>
     <Require feature="dynamic-height"/>
     <Require feature="pubsub-2"/>
-    <Locale lang="en" country="US" messages="http://localhost:8080/desktop/container/GadgetsI18n.jsp?lang=en&amp;country=US" />
-    <Locale lang="pg" messages="http://localhost:8080/desktop/container/GadgetsI18n.jsp?lang=pg" />
-    <Locale messages="http://localhost:8080/desktop/container/GadgetsI18n.jsp?lang=ALL&amp;country=ALL" />
   </ModulePrefs>
   <Content type="html" href="gadget.html">
   </Content>

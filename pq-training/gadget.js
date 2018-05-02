@@ -64,8 +64,8 @@ function putAgentGrade_B(putData){
 
 
 
-// This function uses the PCCE REST api to get an agent's data. 
-// Once we have the response, the data will be put into a message body 
+// This function uses the PCCE REST api to get an agent's data.
+// Once we have the response, the data will be put into a message body
 // containing an agent attribute. The value of this attribute, is their quiz grade out of 10.
 function getAgentDataAndCreatePutData(){
   var url = BASE_AGENT_API_URL_A + agentDBID;
@@ -81,6 +81,7 @@ function getAgentDataAndCreatePutData(){
   var requestCallback = function(response){
     try {
       var jsonObject = convertXMLtoJSON(response.text);
+      console.log('got agent JSON:', jsonObject);
 
       // check if the agent has ANY attributes, if not. lets add the tag.
        if(jsonObject.agentAttributes == undefined){
@@ -110,7 +111,7 @@ function getAgentDataAndCreatePutData(){
         jsonObject.agentAttributes.agentAttribute.push({
           "attribute": {"refURL": attributeRefURL},
           "attributeValue": grade
-        });  
+        });
       }
 
       var putData = parseJSONtoXML("agent", jsonObject);
@@ -123,7 +124,7 @@ function getAgentDataAndCreatePutData(){
       getAgentDataAndCreatePutData_B();
     }
   }
-  
+
   gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
 }
 
@@ -170,7 +171,7 @@ function getAgentDataAndCreatePutData_B(){
         jsonObject.agentAttributes.agentAttribute.push({
           "attribute": {"refURL": attributeRefURL},
           "attributeValue": grade
-        });  
+        });
       }
 
       var putData = parseJSONtoXML("agent", jsonObject);
@@ -214,13 +215,13 @@ function lookupDatabaseID(searchTerm){
       lookupDatabaseID_B(searchTerm);
     }
   }
-  
+
   gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
 }
 
 function lookupDatabaseID_B(searchTerm){
   var url = BASE_AGENT_API_URL_B;
-  
+
   var timeparam = {
     time : (new Date()).getTime()
   };
@@ -244,7 +245,7 @@ function lookupDatabaseID_B(searchTerm){
     var temp = jsonObject.agents.agent.refURL.split("/")
     agentDBID = temp[temp.length-1];
   }
-  
+
   gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
 }
 
@@ -261,7 +262,7 @@ function startEvaluation(){
 function gradeTest() {
   var correctAnswers = 0;
   var form=document.forms["userQuiz"];
-  
+
   if (form.question1[0].checked == true){
     correctAnswers++;
   }
@@ -295,13 +296,13 @@ function gradeTest() {
 
   grade = correctAnswers;
   if(grade >= 7){
-    // do our makerequest, post data is chained off of this function since we need 
+    // do our makerequest, post data is chained off of this function since we need
     // to wait for its response to return before we can send our actual PUT request with the data we fetched.
     getAgentDataAndCreatePutData();
   }
   else{
     var html = "<p>Sorry, your score was <strong>" + grade + " out of 10</strong> (7 out of 10 needed). Please study up and retry later.</p>"
-    
+
     // Now hide the quiz and display fail message in the results div
     $("#evaluation").hide();
     document.getElementById('result').innerHTML = html;
@@ -311,26 +312,73 @@ function gradeTest() {
   }
 }
 
+function getUrlVars (url) {
+  var vars = {};
+  var parts = url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+  function(m,key,value) {
+    vars[key] = value;
+  });
+  return vars;
+}
+
+function getUrlParams () {
+  //First get just the URI for this gadget out of the full finesse URI and decode it.
+  let gadgetURI = decodeURIComponent(getUrlVars(location.search)["url"]);
+
+  //Now get the individual query params from the gadget URI
+  return getUrlVars(gadgetURI);
+}
+
 function initData() {
-  gadgets.window.adjustHeight();
+  let urlParams = getUrlParams();
 
+  // get the video URL, if any
+  if (urlParams["video"]) {
+    let videoUrl = decodeURIComponent(urlParams["video"]);
+    console.log('pq-training got video URL:',videoUrl)
+    $("#trainingVideo").html('<source src="' + videoUrl + '" type="video/mp4"></source>');
+    // make the new video load
+    $("#trainingVideo")[0].load();
+  }
+
+  // get the agent ID, and look up the internal ID of the agent
   var agentID = prefs.getString("id");
+  // set global var
   agentDBID = lookupDatabaseID(agentID);
-  var now = new Date().getTime();
-  var url = marqueeApiUrlBase+agentID+"/?token="+marqueeApiToken+"&nocache="+now;
-  console.log("get marquee api url = " + url);
-  var params = setRequestParams(gadgets.io.MethodType.GET, null);
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, function(response){
-      console.log("marquee response: ",response);
-      try {
-            var parsed = JSON.parse(response.text);
-            console.log("updating marquee text = ", parsed.marquee);
-            $("#trainingMarquee").html(parsed.marquee);
-      } catch(e) {
-          console.log("exception getting marquee text from makeRequest response: ",e);
-      }
-  }, url, gadgets.io.MethodType.GET, null), params);
 
+  // get the marquee text, if any
+  if (urlParams["marquee"]) {
+    let marqueeText = decodeURIComponent(urlParams["marquee"]);
+
+    // set the marquee text if the value exists
+    if (marqueeText.length) {
+      $("#trainingMarquee").html(marqueeText);
+    }
+  }
+
+  // get the marquee text, if any
+  let height = urlParams["height"];
+  // set the marquee text if the value exists
+  if (height) {
+    $("#trainingVideo").attr('height', height);
+  }
+
+  // get the marquee text, if any
+  let width = urlParams["width"];
+  // set the marquee text if the value exists
+  if (width) {
+    $("#trainingVideo").attr('width', width);
+  }
+
+  // get the marquee text, if any
+  let title = urlParams["title"];
+
+  // set the marquee text if the value exists
+  if (title) {
+    gadgets.window.setTitle(decodeURIComponent(title));
+  }
+
+  gadgets.window.adjustHeight();
 }
 
 gadgets.util.registerOnLoadHandler(initData);
