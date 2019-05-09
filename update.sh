@@ -13,23 +13,8 @@ else
   echo "git repo is not current. updating..."
   git pull
   if [ $? -eq 0 ]; then
-    echo "running npm install"
-    npm i
-    if [ $? -eq 0 ]; then
-      echo "running npm run build..."
-      npm run build
-      if [ $? -eq 0 ]; then
-        echo "npm build successful"
-        #echo "removing old files"
-        #rm -rf /var/www/gadgets/cumulus-mobile/*
-        echo "copying gadget folder..."
-        cp -rf pq-training/* /var/www/gadgets/pq-training/
-      else
-        echo "npm failed to run build script"
-      fi
-    else
-      echo "failed npm install"
-    fi
+    echo "copying gadget folder..."
+    cp -rf pq-training/* /var/www/gadgets/pq-training/
   else
     echo "failed to pull repo"
     echo "trying to remove package-lock.json and try on next iteration"
