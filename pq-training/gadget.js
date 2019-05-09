@@ -152,13 +152,14 @@ finesse.modules.CumulusTraining = (function ($) {
 			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.GADGET_VIEW_CHANGED_EVENT, _handleGadgetViewChanged);
 			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.MAX_AVAILABLE_HEIGHT_CHANGED_EVENT, _handleMaxAvailableHeightChange);
 
-			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.ACTIVE_TAB, function() {
-			// 	// log to Finesse logger
-			// 	clientLogs.log("Gadget is now visible");
-			// 	// fix gadget height
-			// 	gadgets.window.adjustHeight()
-			// });
-			// containerServices.makeActiveTabReq();
+			containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.ACTIVE_TAB, function() {
+				// log to Finesse logger
+				clientLogs.log("Gadget is now visible");
+				// fix gadget height
+				gadgets.window.adjustHeight()
+			});
+			
+			containerServices.makeActiveTabReq();
 
 			// finesse.containerservices.ContainerServices.makeActiveTabReq();
 			// user = new finesse.restservices.User({
