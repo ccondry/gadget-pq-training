@@ -42,14 +42,14 @@
 
     .questionGrp {
       width:360px;
-      margin:10px 0 0 0;
+      margin:10px 10px 0 10px;
       line-height:5px;
       float:left;
       text-align:left;
     }
 
     #evaluation {
-      width: 750px;
+      width: 800px;
       margin-left: auto;
       margin-right: auto;
     }

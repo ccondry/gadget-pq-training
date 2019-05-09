@@ -1,384 +1,243 @@
-var BASE_AGENT_API_URL_A = "https://" + UCCE_SIDE_B + "/unifiedconfig/config/agent/";
-var BASE_AGENT_API_URL_B = "https://" + UCCE_SIDE_A + "/unifiedconfig/config/agent/";
-var attributeRefURL = "/unifiedconfig/config/attribute/" + quizAttributeRefID;
-
-
-var grade;
-var agentDBID;
-
-lookupTries = 0;
-
-function putAgentGrade(putData){
-  var url = BASE_AGENT_API_URL_A + agentDBID;
-
-  var params = setRequestParams(gadgets.io.MethodType.PUT, putData);
-
-  // This function will handle the request response.
-  var requestCallback = function(response){
-    if(response.rc === 200) {
-      //console.log("putAgentGrade: success: ",response);
-      var html = "<p>Congratulations! Your score was <strong>" + grade + " out of 10</strong>! You are now certified for the Super4G.</p>"
-
-      // Now hide the quiz and display success message in the results div
-      $("#evaluation").hide();
-      document.getElementById('result').innerHTML = html;
-
-      // Resize the gadget to accommodate the new size.
-      gadgets.window.adjustHeight();
-    }
-    else {
-      console.log("putAgentGrade: error: ",response);
-      console.log("putAgentGrade: trying Side B...");
-      putAgentGrade_B(putData);
-    }
-  }
-
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.PUT, putData), params);
+var finesse = window.finesse;
+var clientLogs;
+if (!finesse) {
+	throw new Error("Finesse library is not available");
+} else {
+	var finesse = finesse || {};
+	finesse.gadget = finesse.gadget || {};
+	finesse.container = finesse.container || {};
+	clientLogs = finesse.cslogger.ClientLogger || {};
 }
 
-function putAgentGrade_B(putData){
-  var url = BASE_AGENT_API_URL_B + agentDBID;
+/** @namespace */
+finesse.modules = finesse.modules || {};
+finesse.modules.CumulusTraining = (function ($) {
+	var _cfg, _prefs;
+	// global for Finesse Utilities (utility function object)
+	var _util;
+	// used to count the calls (dialogs)
+	var numDialogs = 0;
+	// the callvars array of callvariables
+	var callvars = new Array();
+	// gmaps center location
+	var resultsLoaded = false;
+	// requestTypes api response cache object
 
-  var params = setRequestParams(gadgets.io.MethodType.PUT, putData);
-
-  // This function will handle the request response.
-  var requestCallback = function(response){
-    if(response.rc === 200) {
-      //console.log("putAgentGrade_B: success: ",response);
-      var html = "<p>Congratulations! Your score was <strong>" + grade + " out of 10</strong>! You are now certified for the Super4G.</p>"
-
-      // Now hide the quiz and display success message in the results div
-      $("#evaluation").hide();
-      document.getElementById('result').innerHTML = html;
-
-      // Resize the gadget to accommodate the new size.
-      gadgets.window.adjustHeight();
-    }
-    else {
-      //console.log("putAgentGrade_B: error: ",response);
-    }
-  }
-
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.PUT, putData), params);
-}
+	var user, states, dialogs;
 
 
+	var agentId;
 
-// This function uses the PCCE REST api to get an agent's data.
-// Once we have the response, the data will be put into a message body
-// containing an agent attribute. The value of this attribute, is their quiz grade out of 10.
-function getAgentDataAndCreatePutData(){
-  var url = BASE_AGENT_API_URL_A + agentDBID;
-  var timeparam = {
-    time : (new Date()).getTime()
-  };
-  url += "?" + gadgets.io.encodeValues(timeparam);
+	function getUrlVars (url) {
+		var vars = {};
+		var parts = url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+		function(m,key,value) {
+			vars[key] = value;
+		});
+		return vars;
+	}
 
-  var params = setRequestParams(gadgets.io.MethodType.GET, null);
+	function getUrlParams () {
+		//First get just the URI for this gadget out of the full finesse URI and decode it.
+		let gadgetURI = decodeURIComponent(getUrlVars(location.search)["url"]);
 
-  // This function will handle the request response and use it to create new agent data.
-  // This data will include the agent's new attribute value(quiz score).
-  var requestCallback = function(response){
-    try {
-      var jsonObject = convertXMLtoJSON(response.text);
-      console.log('got agent JSON:', jsonObject);
+		//Now get the individual query params from the gadget URI
+		return getUrlVars(gadgetURI);
+	}
 
-      // check if the agent has ANY attributes, if not. lets add the tag.
-       if(jsonObject.agentAttributes == undefined){
-        jsonObject.agentAttributes = {
-          "agentAttribute": []
-        };
-      }
+	// configure the gadget using URL parameters
+	function initData() {
+		let urlParams = getUrlParams();
 
-      // if value is not an array, make it one so that _.each iterates properly
-      if(!_.isArray(jsonObject.agentAttributes.agentAttribute)){
-        jsonObject.agentAttributes.agentAttribute = [jsonObject.agentAttributes.agentAttribute];
-      }
+		// get the video URL, if any
+		if (urlParams["video"]) {
+			let videoUrl = decodeURIComponent(urlParams["video"]);
+			console.log('pqtraining got video URL:',videoUrl)
+			$("#trainingVideo").html('<source src="' + videoUrl + '" type="video/mp4"></source>');
+			// make the new video load
+			$("#trainingVideo")[0].load();
+		}
 
-      // This will iterate through each agent attribute, and if the name of the attribute matches the quiz attribute, we change the attribute value to our new grade.
-      var set = false;
-      _.each(jsonObject.agentAttributes.agentAttribute, function(attributeJSON){
+		// get the agent ID, and look up the internal ID of the agent
+		agentId = _prefs.getString("id");
 
-        if(attributeJSON.attribute.refURL == attributeRefURL){
-          attributeJSON.attributeValue = grade;
-          set = true;
-        }
-      });
+		// get the marquee text, if any
+		if (urlParams["marquee"]) {
+			let marqueeText = decodeURIComponent(urlParams["marquee"]);
 
-      // if set != true, that means the agent didn't already have that attribute.
-      // lets add it to his already existing array of attributes
-      if(set != true){
-        jsonObject.agentAttributes.agentAttribute.push({
-          "attribute": {"refURL": attributeRefURL},
-          "attributeValue": grade
-        });
-      }
+			// set the marquee text if the value exists
+			if (marqueeText.length) {
+				$("#trainingMarquee").html(marqueeText);
+			}
+		}
 
-      var putData = parseJSONtoXML("agent", jsonObject);
-      putAgentGrade(putData);
-    }
-    catch (e) {
-      // statements to handle any exceptions
-      //console.log("getAgentDataAndCreatePutData: UCCE Side A error:",e);
-      //console.log("getAgentDataAndCreatePutData: Trying Side B...");
-      getAgentDataAndCreatePutData_B();
-    }
-  }
+		// get the marquee text, if any
+		let height = urlParams["height"];
+		// set the marquee text if the value exists
+		if (height) {
+			$("#trainingVideo").attr('height', height);
+		}
 
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
-}
+		// get the marquee text, if any
+		let width = urlParams["width"];
+		// set the marquee text if the value exists
+		if (width) {
+			$("#trainingVideo").attr('width', width);
+		}
 
-function getAgentDataAndCreatePutData_B(){
-  var url = BASE_AGENT_API_URL_B + agentDBID;
-  var timeparam = {
-    time : (new Date()).getTime()
-  };
-  url += "?" + gadgets.io.encodeValues(timeparam);
+		// get the marquee text, if any
+		let title = urlParams["title"];
 
-  var params = setRequestParams(gadgets.io.MethodType.GET, null);
+		// set the marquee text if the value exists
+		if (title) {
+			gadgets.window.setTitle(decodeURIComponent(title));
+		}
 
-  // This function will handle the request response and use it to create new agent data.
-  // This data will include the agent's new attribute value(quiz score).
-  var requestCallback = function(response){
-    try{
-      var jsonObject = convertXMLtoJSON(response.text);
+		// gadgets.window.adjustHeight();
+	}
 
-      // check if the agent has ANY attributes, if not. lets add the tag.
-       if(jsonObject.agentAttributes == undefined){
-        jsonObject.agentAttributes = {
-          "agentAttribute": []
-        };
-      }
+	function getAgentDataAndCreatePutData(grade) {
+	  const url = 'https://branding.dcloud.cisco.com/api/v1/certification?agent=' + agentId + '&grade=' + grade
+	  const params = {}
+	  params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST
+	  function callback (response) {
+	    if(response.rc >= 200 && response.rc < 300) {
+	      var html = "<p>Congratulations! Your score was <strong>" + grade + " out of 10</strong>! You are now certified for the Super4G.</p>"
 
-      // if value is not an array, make it one so that _.each iterates properly
-      if(!_.isArray(jsonObject.agentAttributes.agentAttribute)){
-        jsonObject.agentAttributes.agentAttribute = [jsonObject.agentAttributes.agentAttribute];
-      }
+	      // Now hide the quiz and display success message in the results div
+	      $("#evaluation").hide();
+	      document.getElementById('result').innerHTML = html;
 
-      // This will iterate through each agent attribute, and if the name of the attribute matches the quiz attribute, we change the attribute value to our new grade.
-      var set = false;
-      _.each(jsonObject.agentAttributes.agentAttribute, function(attributeJSON){
+	      // Resize the gadget to accommodate the new size.
+	      // gadgets.window.adjustHeight()
+	    } else {
+	      // bad response code
+	      console.log("putAgentGrade: error: ", response)
+	      var html = "<p>Sorry, there was an error saving your quiz score.</p>"
 
-        if(attributeJSON.attribute.refURL == attributeRefURL){
-          attributeJSON.attributeValue = grade;
-          set = true;
-        }
-      });
+	      // Now hide the quiz and display error message in the results div
+	      $("#evaluation").hide();
+	      document.getElementById('result').innerHTML = html;
+	      // gadgets.window.adjustHeight()
+	    }
+	  }
+	  // make the request
+	  gadgets.io.makeRequest(url, callback, params)
+	}
 
-      // if set != true, that means the agent didn't already have that attribute.
-      // lets add it to his already existing array of attributes
-      if(set != true){
-        jsonObject.agentAttributes.agentAttribute.push({
-          "attribute": {"refURL": attributeRefURL},
-          "attributeValue": grade
-        });
-      }
+	function render() {
+		var currentState = user.getState();
+	}
 
-      var putData = parseJSONtoXML("agent", jsonObject);
-      putAgentGrade_B(putData);
-    }
-    catch (e) {
-      // statements to handle any exceptions
-      //console.log("getAgentDataAndCreatePutData_B: UCCE Side B error:",e);
-      //console.log("getAgentDataAndCreatePutData_B: Either the UCCE A and B sides are down, or the credentials in config.js are invalid");
-      getAgentDataAndCreatePutData_B();
-    }
-  }
+	/** @scope finesse.modules.CumulusTraining */
+	return {
+		/**
+		* Performs all initialization for this gadget
+		*/
+		init : function () {
+			// For SSO deployment, Gadgets should use the finesse provided config
+			// object instead of creating their own instance
+			_cfg = finesse.gadget.Config;
 
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
-}
+			// Initiate the ClientServices and load the config object. ClientServices
+			// are initialized with a reference to the current configuration.
+			// For SSO deployments , gadgets need to initialize clientservices for
+			// loading config object properly.Without initialization, SSO mode will not work
+			finesse.clientservices.ClientServices.init(_cfg);
+			_prefs = new gadgets.Prefs();
+			clientLogs.init(gadgets.Hub, "CumulusTraining", finesse.gadget.Config); // this gadget id will be logged as a part of the message
+
+			containerServices = finesse.containerservices.ContainerServices.init();
+			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.ACTIVE_TAB, _handleTabVisible);
+			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.GADGET_VIEW_CHANGED_EVENT, _handleGadgetViewChanged);
+			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.MAX_AVAILABLE_HEIGHT_CHANGED_EVENT, _handleMaxAvailableHeightChange);
+
+			// containerServices.addHandler(finesse.containerservices.ContainerServices.Topics.ACTIVE_TAB, function() {
+			// 	// log to Finesse logger
+			// 	clientLogs.log("Gadget is now visible");
+			// 	// fix gadget height
+			// 	gadgets.window.adjustHeight()
+			// });
+			// containerServices.makeActiveTabReq();
+
+			// finesse.containerservices.ContainerServices.makeActiveTabReq();
+			// user = new finesse.restservices.User({
+			// 	id: finesse.gadget.Config.id,
+			// 	onLoad : handleUserLoad,
+			// 	onChange : handleUserChange
+			// });
+
+      gadgets.util.registerOnLoadHandler(gadgets.window.adjustHeight)
+
+			_util = finesse.utilities.Utilities;
 
 
-function lookupDatabaseID(searchTerm){
-  var url = BASE_AGENT_API_URL_A;
-  var timeparam = {
-    time : (new Date()).getTime()
-  };
-  url += "?" + gadgets.io.encodeValues(timeparam);
-  url += "&q=" + searchTerm;
+			states = finesse.restservices.User.States;
+			/**
+			* init user code
+			*/
+			initData()
+			clientLogs.log("completed init");
+		},
 
-  var params = setRequestParams(gadgets.io.MethodType.GET, null);
+		gradeTest: function () {
+			var correctAnswers = 0;
+			var form=document.forms["userQuiz"];
 
-  // This function will handle the request response and use it to create new agent data.
-  // This data will include the agent's new attribute value(quiz score).
-  var requestCallback = function(response){
-    try {
-      var jsonObject = convertXMLtoJSON(response.text);
-      //console.log("lookupDatabaseID: ", jsonObject);
-      var temp = jsonObject.agents.agent.refURL.split("/")
-      agentDBID = temp[temp.length-1];
-    }
-    catch (e) {
-    // statements to handle any exceptions
-      //console.log("UCCE Side A error:",e); // pass exception object to error handler
-      //console.log("Trying Side B...");
-      lookupDatabaseID_B(searchTerm);
-    }
-  }
+			if (form.question1[0].checked == true){
+				correctAnswers++;
+			}
+			if (form.question2[0].checked == true){
+				correctAnswers++;
+			}
+			if (form.question3[1].checked == true){
+				correctAnswers++;
+			}
+			if (form.question4[2].checked == true){
+				correctAnswers++;
+			}
+			if (form.question5[0].checked == true){
+				correctAnswers++;
+			}
+			if (form.question6[2].checked == true){
+				correctAnswers++;
+			}
+			if (form.question7[0].checked == true){
+				correctAnswers++;
+			}
+			if (form.question8[0].checked == true){
+				correctAnswers++;
+			}
+			if (form.question9[2].checked == true){
+				correctAnswers++;
+			}
+			if (form.question10[0].checked == true){
+				correctAnswers++;
+			}
 
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
-}
+			var grade = correctAnswers;
+			if (grade >= 7) {
+				// do our makerequest, post data is chained off of this function since we need
+				// to wait for its response to return before we can send our actual PUT request with the data we fetched.
+				getAgentDataAndCreatePutData(grade);
+			}
+			else{
+				var html = "<p>Sorry, your score was <strong>" + grade + " out of 10</strong> (7 out of 10 needed). Please study up and retry later.</p>"
 
-function lookupDatabaseID_B(searchTerm){
-  var url = BASE_AGENT_API_URL_B;
+				// Now hide the quiz and display fail message in the results div
+				$("#evaluation").hide();
+				document.getElementById('result').innerHTML = html;
 
-  var timeparam = {
-    time : (new Date()).getTime()
-  };
-  url += "?" + gadgets.io.encodeValues(timeparam);
-  url += "&q=" + searchTerm;
+				// Resize the gadget to accommodate the new size.
+				// gadgets.window.adjustHeight();
+			}
+		},
 
-  var params = setRequestParams(gadgets.io.MethodType.GET, null);
+		startEvaluation: function () {
+			$("#training").remove();
+			$("#evaluation").show();
 
-  // This function will handle the request response and use it to create new agent data.
-  // This data will include the agent's new attribute value(quiz score).
-  var requestCallback = function(response){
-    try {
-      var jsonObject = convertXMLtoJSON(response.text);
-    }
-    catch (e) {
-        // statements to handle any exceptions
-        //console.log("UCCE Side B error:",e); // pass exception object to error handler
-	    //console.log("Either the UCCE A and B sides are down, or the credentials in config.js are invalid");
-    }
-	//console.log("lookupDatabaseID: ", jsonObject);
-    var temp = jsonObject.agents.agent.refURL.split("/")
-    agentDBID = temp[temp.length-1];
-  }
-
-  gadgets.io.makeRequest(url, createCallbackFunction.call(this, requestCallback, url, gadgets.io.MethodType.GET, null), params);
-}
-
-function startEvaluation(){
-  var popup=confirm("This will start the evaluation! Click OK to begin.");
-  if (popup==true){
-    $("#training").remove();
-    $("#evaluation").show();
-
-    gadgets.window.adjustHeight();
-  }
-}
-
-function gradeTest() {
-  var correctAnswers = 0;
-  var form=document.forms["userQuiz"];
-
-  if (form.question1[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question2[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question3[2].checked == true){
-    correctAnswers++;
-  }
-  if (form.question4[2].checked == true){
-    correctAnswers++;
-  }
-  if (form.question5[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question6[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question7[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question8[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question9[0].checked == true){
-    correctAnswers++;
-  }
-  if (form.question10[0].checked == true){
-    correctAnswers++;
-  }
-
-  grade = correctAnswers;
-  if(grade >= 7){
-    // do our makerequest, post data is chained off of this function since we need
-    // to wait for its response to return before we can send our actual PUT request with the data we fetched.
-    getAgentDataAndCreatePutData();
-  }
-  else{
-    var html = "<p>Sorry, your score was <strong>" + grade + " out of 10</strong> (7 out of 10 needed). Please study up and retry later.</p>"
-
-    // Now hide the quiz and display fail message in the results div
-    $("#evaluation").hide();
-    document.getElementById('result').innerHTML = html;
-
-    // Resize the gadget to accommodate the new size.
-    gadgets.window.adjustHeight();
-  }
-}
-
-function getUrlVars (url) {
-  var vars = {};
-  var parts = url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-  function(m,key,value) {
-    vars[key] = value;
-  });
-  return vars;
-}
-
-function getUrlParams () {
-  //First get just the URI for this gadget out of the full finesse URI and decode it.
-  let gadgetURI = decodeURIComponent(getUrlVars(location.search)["url"]);
-
-  //Now get the individual query params from the gadget URI
-  return getUrlVars(gadgetURI);
-}
-
-function initData() {
-  let urlParams = getUrlParams();
-
-  // get the video URL, if any
-  if (urlParams["video"]) {
-    let videoUrl = decodeURIComponent(urlParams["video"]);
-    console.log('pq-training got video URL:',videoUrl)
-    $("#trainingVideo").html('<source src="' + videoUrl + '" type="video/mp4"></source>');
-    // make the new video load
-    $("#trainingVideo")[0].load();
-  }
-
-  // get the agent ID, and look up the internal ID of the agent
-  var agentID = prefs.getString("id");
-  // set global var
-  agentDBID = lookupDatabaseID(agentID);
-
-  // get the marquee text, if any
-  if (urlParams["marquee"]) {
-    let marqueeText = decodeURIComponent(urlParams["marquee"]);
-
-    // set the marquee text if the value exists
-    if (marqueeText.length) {
-      $("#trainingMarquee").html(marqueeText);
-    }
-  }
-
-  // get the marquee text, if any
-  let height = urlParams["height"];
-  // set the marquee text if the value exists
-  if (height) {
-    $("#trainingVideo").attr('height', height);
-  }
-
-  // get the marquee text, if any
-  let width = urlParams["width"];
-  // set the marquee text if the value exists
-  if (width) {
-    $("#trainingVideo").attr('width', width);
-  }
-
-  // get the marquee text, if any
-  let title = urlParams["title"];
-
-  // set the marquee text if the value exists
-  if (title) {
-    gadgets.window.setTitle(decodeURIComponent(title));
-  }
-
-  gadgets.window.adjustHeight();
-}
-
-gadgets.util.registerOnLoadHandler(initData);
+			// gadgets.window.adjustHeight();
+		}
+	};
+}(jQuery));

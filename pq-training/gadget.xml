@@ -4,10 +4,11 @@
       description="Allows dynamic configuration of Precision Routing using the CCE Rest API. This version includes A/B side failover support, as well as a configurable marquee using the labconfig API."
               thumbnail="thumbnail.png"
               screenshot="screenshot.png"
-              height="580"> 
+              height="580">
     <Require feature="settitle"/>
-    <Require feature="dynamic-height"/>
-    <Require feature="pubsub-2"/>
+    <Require feature="dynamic-height" />
+    <Require feature="setprefs" />
+    <Require feature="pubsub-2" />
   </ModulePrefs>
   <Content type="html" href="gadget.html">
   </Content>

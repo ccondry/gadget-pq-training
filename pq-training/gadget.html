@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<head>
   <link rel="stylesheet" type="text/css" href="bootstrap.min.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="gadget.css" media="screen" />
 
@@ -9,20 +7,13 @@
 
   <!-- jquery and underscore -->
   <script type="text/javascript" src="/desktop/assets/js/jquery.min.js"></script>
-  <script type="text/javascript" src="underscore.js"></script>
 
   <!-- Finesse Library -->
   <script type="text/javascript" src="/desktop/assets/js/finesse.js"></script>
 
-  <!-- Gadget Config -->
-  <script type="text/javascript" src="config.js"></script>
-
   <!-- Gadget Business Logic -->
   <script type="text/javascript" src="gadget.js"></script>
 
-  <!-- REST Utils -->
-  <script type="text/javascript" src="RestUtils.js"></script>
-</head>
 <body>
 
   <div id="content">
@@ -31,7 +22,7 @@
       <div id="panelWrapper">
         <div class="contentPanel">
           <video id="trainingVideo" width="400" height="325" controls>
-            <source src="/3rdpartygadget/files/pq-training/super4g.mp4" type="video/mp4" />
+            <source src="/3rdpartygadget/files/Cumulus/PQTraining/cumulus.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
@@ -42,7 +33,7 @@
       </div>
 
       <br><br>
-      <input value="Begin Certification Exam" class="btn btn-large" type="submit" onClick="startEvaluation()">
+      <input value="Begin Certification Exam" class="btn btn-large" type="submit" onClick="javascript:finesse.modules.CumulusTraining.startEvaluation()">
       <br><br>
     </div> <!-- /div training -->
 
@@ -51,71 +42,71 @@
         <h3>Passing Score: 7/10 or better</h3>
         <ol>
           <div class="questionGrp">
-            <li>Does the SUPER 4G support bluetooth technology?</li><br>
-            <input name="question1" value="true" checked="checked" type="radio"> True</input><br>
-            <input name="question1" value="false" type="radio"> False</input><br>
+            <li>Does Cumulus Travel provide flights and hotel booking?</li><br>
+            <input name="question1" value="true" checked="checked" type="radio"> Yes</input><br>
+            <input name="question1" value="false" type="radio"> No</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>Is this SUPER 4G compatible with MP3s?</li><br>
-            <input name="question2" value="true" checked="checked" type="radio"> True</input><br>
-            <input name="question2" value="false" type="radio"> False</input><br>
+            <li>Does Cumulus Travel provide honeymoon packages?</li><br>
+            <input name="question2" value="true" checked="checked" type="radio"> Yes</input><br>
+            <input name="question2" value="false" type="radio"> No</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>What type of camera is built into the SUPER 4G?</li><br>
-            <input name="question3" value="4.0MP" type="radio"> 4.0MP</input><br>
-            <input name="question3" value="6.0MP" type="radio"> 6.0MP</input><br>
-            <input name="question3" value="8.0MP" checked="checked" type="radio"> 8.0MP</input><br>
+            <li>Which is the Cumulus Finance 30 year mortgage interest rate?</li><br>
+            <input name="question3" value="2.0percent" type="radio"> 2.0 percent</input><br>
+            <input name="question3" value="3.875percent" checked="checked" type="radio"> 3.875 percent</input><br>
+            <input name="question3" value="4.1percent" type="radio"> 4.1 percent</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>How much internal memory is this device shipped with?</li><br>
-            <input name="question4" value="4GB" type="radio"> 4GB</input><br>
-            <input name="question4" value="8GB" type="radio"> 8GB</input><br>
-            <input name="question4" value="16GB" checked="checked" type="radio"> 16GB</input><br>
+            <li>How long does it take to get a Cumulus Finance mortgage?</li><br>
+            <input name="question4" value="15day" type="radio"> 15 days</input><br>
+            <input name="question4" value="30days" type="radio"> 30 days</input><br>
+            <input name="question4" value="60days" checked="checked" type="radio"> 60 days</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>Is flash supported on the SUPER 4G?</li><br>
-            <input name="question5" value="true" checked="checked" type="radio"> True</input><br>
-            <input name="question5" value="false" type="radio"> False</input><br>
+            <li>Does Cumulus Healthcare provide elder care services?</li><br>
+            <input name="question5" value="true" checked="checked" type="radio"> Yes</input><br>
+            <input name="question5" value="false" type="radio"> No</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>What is the maximum video resolution supported.</li><br>
-            <input name="question6" value="1080p" checked="checked" type="radio"> 1080p</input><br>
-            <input name="question6" value="720p" type="radio"> 720p</input><br>
-            <input name="question6" value="480p" type="radio"> 480p</input><br>
+            <li>Which kind of elder care services are provided by Cumulus Healthcare?</li><br>
+            <input name="question6" value="bathingservices" type="radio"> Bathing Services</input><br>
+            <input name="question6" value="dressingsupport" type="radio"> Dressing Support</input><br>
+            <input name="question6" value="both" checked="checked" type="radio"> Both</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>Does the SUPER 4G support wireless charging?</li><br>
-            <input name="question7" value="true" checked="checked" type="radio"> True</input><br>
-            <input name="question7" value="false" type="radio"> False</input><br>
+            <li>Does Cumulus City help with charity events planning?</li><br>
+            <input name="question7" value="true" checked="checked" type="radio"> Yes</input><br>
+            <input name="question7" value="false" type="radio"> No</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>Does the SUPER 4G support NFC for wireless exchange of data with other NFC devices?</li><br>
-            <input name="question8" value="true" checked="checked" type="radio"> True</input><br>
-            <input name="question8" value="false" type="radio"> False</input><br>
+            <li>Does Cumulus City provide police patrol support?</li><br>
+            <input name="question8" value="true" checked="checked" type="radio"> Yes</input><br>
+            <input name="question8" value="false" type="radio"> No</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>What is the talk time battery life?</li><br>
-            <input name="question9" value="30 hours" checked="checked" type="radio"> 30 hours</input><br>
-            <input name="question9" value="20 hours" type="radio"> 20 hours</input><br>
-            <input name="question9" value="10 hours" type="radio"> 10 hours</input><br>
+            <li>Which kind of services are provided by Cumulus Utility?</li><br>
+            <input name="question9" value="gas" type="radio"> Gas</input><br>
+            <input name="question9" value="electricity" type="radio"> Electricity</input><br>
+            <input name="question9" value="both" checked="checked" type="radio"> Both</input><br>
           </div>
 
           <div class="questionGrp">
-            <li>Does the SUPER 4G support WiFi?</li><br>
-            <input name="question10" value="true" checked="checked" type="radio"> True</input><br>
-            <input name="question10" value="false" type="radio"> False</input><br>
+            <li>Can user transfer Cumulus Utility services to a different home?</li><br>
+            <input name="question10" value="true" checked="checked" type="radio"> Yes</input><br>
+            <input name="question10" value="false" type="radio"> No</input><br>
           </div>
         </ol>
       </form>
-      <input value="Submit" class="btn btn-large" type="submit" onClick="gradeTest()">
+      <input value="Submit" class="btn btn-large" type="submit" onClick="javascript:finesse.modules.CumulusTraining.gradeTest()">
       <br><br>
     </div>
 
@@ -123,4 +114,13 @@
 
   </div> <!-- /div content -->
 </body>
-</html>
+<script type="text/javascript">
+
+// initialize the gadget by loading the GoogleMaps javascript from Google based on the API Key
+// (Be sure to obtain and replace the API Key in GoogleMapsScreenPop.js)
+// and then run the gadget init handler
+
+gadgets.HubSettings.onConnect = function () {
+    finesse.modules.CumulusTraining.init();
+};
+</script>
