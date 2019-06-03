@@ -158,7 +158,7 @@ finesse.modules.CumulusTraining = (function ($) {
 				// fix gadget height
 				gadgets.window.adjustHeight()
 			});
-			
+
 			containerServices.makeActiveTabReq();
 
 			// finesse.containerservices.ContainerServices.makeActiveTabReq();
@@ -237,8 +237,8 @@ finesse.modules.CumulusTraining = (function ($) {
 		startEvaluation: function () {
 			$("#training").remove();
 			$("#evaluation").show();
-
-			// gadgets.window.adjustHeight();
+			// fix gadget height
+			gadgets.window.adjustHeight()
 		}
 	};
 }(jQuery));
