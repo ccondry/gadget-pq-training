@@ -102,7 +102,7 @@ finesse.modules.CumulusTraining = (function ($) {
 	  params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST
 	  function callback (response) {
 	    if(response.rc >= 200 && response.rc < 300) {
-	      var html = "<p>Congratulations! Your score was <strong>" + grade + " out of 10</strong>! You are now certified for the Super4G.</p>"
+	      var html = "<p>Congratulations! Your score was <strong>" + grade + " out of 10</strong>! You are now certified for the Cumulus.</p>"
 
 	      // Now hide the quiz and display success message in the results div
 	      $("#evaluation").hide();
