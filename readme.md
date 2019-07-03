@@ -1,4 +1,4 @@
-in /etc/nginx/conf.d/default:
+in /etc/nginx/conf.d/default.conf:
 
 location /gadgets {
     proxy_set_header Host $http_host;
