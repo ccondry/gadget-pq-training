@@ -106,6 +106,7 @@ finesse.modules.CumulusTraining = (function ($) {
 
 	      // Now hide the quiz and display success message in the results div
 	      $("#evaluation").hide();
+				$("#result").show();
 	      document.getElementById('result').innerHTML = html;
 
 	      // Resize the gadget to accommodate the new size.
@@ -117,6 +118,7 @@ finesse.modules.CumulusTraining = (function ($) {
 
 	      // Now hide the quiz and display error message in the results div
 	      $("#evaluation").hide();
+				$("#result").show();
 	      document.getElementById('result').innerHTML = html;
 	      // gadgets.window.adjustHeight()
 	    }
