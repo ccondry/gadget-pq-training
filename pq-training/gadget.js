@@ -233,8 +233,7 @@ finesse.modules.CumulusTraining = (function ($) {
 				// do our makerequest, post data is chained off of this function since we need
 				// to wait for its response to return before we can send our actual PUT request with the data we fetched.
 				getAgentDataAndCreatePutData(grade);
-			}
-			else{
+			} else {
 				var html = "<p>Sorry, your score was <strong>" + grade + " out of 10</strong> (7 out of 10 needed). Please study up and retry later.</p>"
 
 				// Now hide the quiz and display fail message in the results div
