@@ -235,7 +235,7 @@ finesse.modules.CumulusTraining = (function ($) {
 		},
 
 		startEvaluation: function () {
-			$("#training").remove();
+			$("#training").hide();
 			$("#evaluation").show();
 			// fix gadget height
 			gadgets.window.adjustHeight()
