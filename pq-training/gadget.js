@@ -125,6 +125,18 @@ finesse.modules.CumulusTraining = (function ($) {
 	  gadgets.io.makeRequest(url, callback, params)
 	}
 
+	// reset the UI back to the way it was when gadget initially loaded
+	function resetUi () {
+		// show initial training div
+		$("#training").show();
+		// hide the test
+		$("#evaluation").hide();
+		// hide any results
+		$("#result").hide();
+		// fix gadget height
+		gadgets.window.adjustHeight()
+	}
+
 	function render() {
 		var currentState = user.getState();
 	}
@@ -232,6 +244,8 @@ finesse.modules.CumulusTraining = (function ($) {
 				// Resize the gadget to accommodate the new size.
 				// gadgets.window.adjustHeight();
 			}
+			// reset UI back to initial state after 10 seconds
+			setTimeout(resetUi, 10000)
 		},
 
 		startEvaluation: function () {
